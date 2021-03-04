@@ -1,0 +1,29 @@
+# OS
+*.log
+**/*.log
+.DS_Store
+**/.DS_Store
+# Dependencies
+**/node_modules
+
+# React App
+build
+src/config.js
+.env.local
+.eslintcache
+
+# Firebase
+.firebase
+
+# Functions
+functions/etc
+functions/dist
+functions/.runtimeconfig.json
+functions/coverage
+functions/.nyc_output
+
+# Tests
+cypress/videos
+cypress/screenshots
+cypress.env.json
+serviceAccount.json

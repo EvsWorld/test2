@@ -1,0 +1,23 @@
+{
+  "presets": [
+    ["@babel/preset-env", {
+      "targets": {
+        "node": "12"
+      }
+    }]
+  ],
+  "plugins": [
+    ["module-resolver", {
+      "root": ["./src"]
+    }]
+  ],
+  "env": {
+    "production": {
+      "presets": [
+        ["minify", {
+          "keepFnName": true
+        }]
+      ]
+    }
+  }
+}

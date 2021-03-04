@@ -1,0 +1,29 @@
+{
+  "generator-react-firebase": {
+    "promptValues": {
+      "githubUser": "evsWorld",
+      "includeRedux": false,
+      "includeFirestore": true,
+      "otherFeatures": [
+        "Continuous Integration config",
+        "Firebase Cloud Messaging",
+        "Firebase Functions (with ESNext support)",
+        "Tests for Firebase Functions (Mocha/Chai or Jest)",
+        "Tests for React Components (Jest)",
+        "Tests for UI (Cypress)",
+        "Firebase Analytics",
+        "Error Tracking (Sentry.io)",
+        "Client Side Error Reporting (Stackdriver)"
+      ],
+      "functionsTestTool": "jest",
+      "typescriptCloudFunctions": false,
+      "firebaseKey": "AIzaSyALJHYk_raK3oDObVEuQhbaprmS1wv_8tI",
+      "firebaseProjectId": "dripshare-1",
+      "messagingSenderId": "839836220635",
+      "appId": "1:839836220635:web:998d5b5a00d5c4224f20fe",
+      "measurementId": "G-958FLL87SJ",
+      "firebasePublicVapidKey": "mSyx202Hl-KZNw6CZW67aooYGdxTEZx3gEWwkKo0x4U",
+      "ciProvider": "githubActions"
+    }
+  }
+}

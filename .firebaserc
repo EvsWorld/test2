@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "dripshare-1",
+    "master": "dripshare-1",
+    "prod": "dripshare-1"
+  }
+}
