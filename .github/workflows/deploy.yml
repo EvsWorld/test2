@@ -50,13 +50,13 @@ jobs:
           yarn install --frozen-lockfile
           yarn --cwd functions install --frozen-lockfile
 
-      - name: Set App Environment Settings
-        env:
-          MASTER_SERVICE_ACCOUNT: ${{ secrets.MASTER_SERVICE_ACCOUNT }}
-          PROD_SERVICE_ACCOUNT: ${{ secrets.PROD_SERVICE_ACCOUNT }}
-          GITHUB_HEAD_REF: ${{ github.head_ref }}
-          GITHUB_REF: ${{ github.ref }}
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      # - name: Set App Environment Settings
+      #   env:
+      #     MASTER_SERVICE_ACCOUNT: ${{ secrets.MASTER_SERVICE_ACCOUNT }}
+      #     PROD_SERVICE_ACCOUNT: ${{ secrets.PROD_SERVICE_ACCOUNT }}
+      #     GITHUB_HEAD_REF: ${{ github.head_ref }}
+      #     GITHUB_REF: ${{ github.ref }}
+      #     FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
       #   run: |
       #     set -o pipefail
 
