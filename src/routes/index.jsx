@@ -8,6 +8,7 @@ import Home from './Home'
 import LoginRoute from './Login'
 import SignupRoute from './Signup'
 import ProjectsRoute from './Projects'
+import ViewLinksRoute from './ViewLinks'
 import AccountRoute from './Account'
 import NotFoundRoute from './NotFound'
 
@@ -23,6 +24,7 @@ export default function createRoutes() {
             [
               AccountRoute,
               ProjectsRoute,
+              ViewLinksRoute,
               SignupRoute,
               LoginRoute
               /* Add More Routes Here */
