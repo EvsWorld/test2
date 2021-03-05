@@ -1,5 +1,10 @@
 module.exports = {
-  extends: ['standard', 'standard-react', 'prettier', 'prettier/react'],
+  extends: [
+    'standard',
+    'plugin:react/recommended',
+    'prettier',
+    'prettier/react'
+  ],
   root: true,
   parser: 'babel-eslint',
   plugins: ['import', 'react', 'react-hooks', 'prettier'],
