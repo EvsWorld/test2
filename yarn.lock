@@ -6737,12 +6737,12 @@ firebase-admin@^9.5.0:
     "@google-cloud/firestore" "^4.5.0"
     "@google-cloud/storage" "^5.3.0"
 
-firebase-ci@^0.15.0:
-  version "0.15.0"
-  resolved "https://registry.yarnpkg.com/firebase-ci/-/firebase-ci-0.15.0.tgz#2053975fb8206e5512656445814529da652a9289"
-  integrity sha512-4/cEmTt9i3GO96sakuS3Wvp3xAE3bpkF4vKUdFsSe5wLQvXbd0ohfrUPYiE2THdZ6Ntj8LDNGe7vGiO2va98Kg==
+firebase-ci@^0.15.1:
+  version "0.15.1"
+  resolved "https://registry.yarnpkg.com/firebase-ci/-/firebase-ci-0.15.1.tgz#cc1d41c5b94ce36661373534373e1f403872f812"
+  integrity sha512-z6l8+fjID9NVdU6UsH0gI1yY0oCAPkmGJbLHyiWnQH19rtMqpa5L0ufTWYGknVM7KOEhrahRUR41ozKcEjzZbA==
   dependencies:
-    chalk "^3.0.0"
+    chalk "^4.1.0"
     command-exists "^1.2.8"
     commander "^4.1.0"
     figures "^3.1.0"
