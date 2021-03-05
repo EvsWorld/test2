@@ -30,11 +30,6 @@ console.log(
   process.env.REACT_APP_FIREBASE_projectId
 )
 
-console.log(
-  'process.env.REACT_APP_FB_projectId :>> ',
-  process.env.REACT_APP_FB_projectId
-)
-
 function App() {
   const routes = createRoutes()
   return (
