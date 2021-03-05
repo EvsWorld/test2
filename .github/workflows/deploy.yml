@@ -109,6 +109,8 @@ jobs:
               sed 's/:"/:/g; s/^/echo \"REACT_APP_FB_/g' \
           )
 
+          echo $firebaseConfig
+
           # Loop through each line of config and evaluate to export env vars
           while IFS= read -r line; do
             echo Evaluating: $line
