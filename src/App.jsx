@@ -9,7 +9,7 @@ import SetupAnalytics from 'components/SetupAnalytics'
 import createRoutes from './routes'
 
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FB_apiKey,
+  apiKey: process.env.REACT_APP_FIREBASE_apiKey,
   authDomain: process.env.REACT_APP_FIREBASE_authDomain,
   databaseURL: process.env.REACT_APP_FIREBASE_databaseURL,
   projectId: process.env.REACT_APP_FIREBASE_projectId,
