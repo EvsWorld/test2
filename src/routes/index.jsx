@@ -18,7 +18,7 @@ export default function createRoutes() {
       <SuspenseWithPerf fallback={<LoadingSpinner />} traceId="router-wait">
         <Switch>
           {/* eslint-disable-next-line react/jsx-pascal-case */}
-          <Route exact path={Home.path} component={() => <Home.component />} />
+      <Route exact path={Home.path} component={() => <Home.component />} />
           {
             /* Build Route components from routeSettings */
             [
