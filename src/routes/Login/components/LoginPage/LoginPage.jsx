@@ -15,7 +15,7 @@ function LoginPage() {
   const classes = useStyles()
   const auth = useAuth()
   const { GoogleAuthProvider } = useAuth
-      const { showError } = useNotifications()
+        const { showError } = useNotifications()
 
   async function googleLogin() {
     const provider = new GoogleAuthProvider()
