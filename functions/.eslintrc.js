@@ -13,7 +13,6 @@ module.exports = {
     'jsdoc/newline-after-description': 0
   },
   overrides: [
-    ,
     {
       files: ['src/**/*.spec.js'],
       env: {
