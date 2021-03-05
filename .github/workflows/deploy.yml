@@ -105,17 +105,20 @@ jobs:
               tr '\n' ' ' | \
               sed 's/.*initializeApp(//g' | \
               sed 's/);//g' | \
-              jq -r 'to_entries[] | [.key, (.value | tojson)] | join("=")' | \
+              jq -r 'to_entries[] | [.key, (.value | tojson)] | join("::")' | \
               sed 's/:"/:/g; s/^/echo \"REACT_APP_FB_/g' \
           )
 
           echo $firebaseConfig
+          echo $GITHUB_ENV
 
           # Loop through each line of config and evaluate to export env vars
           while IFS= read -r line; do
             echo Evaluating: $line
             echo $line >> $GITHUB_ENV
           done <<< "$firebaseConfig"
+
+          echo $GITHUB_ENV
 
       - name: Verify App
         run: |
