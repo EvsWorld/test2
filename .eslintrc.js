@@ -22,6 +22,7 @@ module.exports = {
     semi: [2, 'never'],
     'no-console': 0,
     'react/forbid-prop-types': 0,
+    'react/no-unescaped-entities': ['error', { forbid: ['>', '"', '}'] }],
     'react/require-default-props': 0,
     'react/jsx-filename-extension': 0,
     'import/no-named-as-default': 0,
