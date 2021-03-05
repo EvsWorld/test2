@@ -25,6 +25,16 @@ if (process.env.REACT_APP_FIREBASE_DATABASE_EMULATOR_HOST) {
   console.debug(`RTDB emulator enabled: ${firebaseConfig.databaseURL}`) // eslint-disable-line no-console
 }
 
+console.log(
+  'process.env.REACT_APP_FIREBASE_projectId :>> ',
+  process.env.REACT_APP_FIREBASE_projectId
+)
+
+console.log(
+  'process.env.REACT_APP_FB_projectId :>> ',
+  process.env.REACT_APP_FB_projectId
+)
+
 function App() {
   const routes = createRoutes()
   return (

@@ -112,8 +112,6 @@ jobs:
           echo "log firebaseConfig"
           echo $firebaseConfig
 
-          echo "log GITHUB_ENV"
-          eval $GITHUB_ENV
 
           # Loop through each line of config and evaluate to export env vars
           while IFS= read -r line; do
@@ -121,8 +119,6 @@ jobs:
             echo $line >> $GITHUB_ENV
           done <<< "$firebaseConfig"
 
-          echo "log GITHUB_ENV"
-          eval $GITHUB_ENV
 
       - name: Verify App
         run: |
