@@ -115,9 +115,9 @@ jobs:
       #       eval $line >> $GITHUB_ENV
       #     done <<< "$firebaseConfig"
 
-      # - name: Verify App
-      #   run: |
-      #     yarn lint # Check for lint in app code
+      - name: Verify App
+        run: |
+          yarn lint # Check for lint in app code
 
       # # NOTE: Skipped because of "Channel credentials must be a ChannelCredentials object" error from firebase-admin
       # # See https://github.com/firebase/firebase-tools/issues/2207 for more info
