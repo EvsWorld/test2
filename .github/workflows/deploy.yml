@@ -153,7 +153,7 @@ jobs:
         # Deploy to project associated with branch name alias in .firebaserc.
         # Force flag is used to automatically delete any removed cloud functions
         run: |
-          $(yarn bin)/firebase-ci deploy --except database -i -s --force
+          $(yarn bin)/firebase-ci deploy --except database -i -s --force --debug
 
       - name: Check if version has been updated
         if: github.ref == 'refs/heads/prod'
