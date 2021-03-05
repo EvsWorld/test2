@@ -106,7 +106,7 @@
       "prettier --write"
     ],
     "*.{js,jsx,ts}": [
-      "npm run eslint"
+      "npm run lint"
     ]
   },
   "config": {

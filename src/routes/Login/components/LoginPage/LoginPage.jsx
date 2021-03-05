@@ -35,7 +35,7 @@ function LoginPage() {
         formValues.password
       )
       // NOTE: window.location used since history.push/replace does not always work
-      window.location = LIST_PATH
+            window.location = LIST_PATH
     } catch (err) {
       showError(err.message)
     }
