@@ -15,7 +15,7 @@ function LoginPage() {
   const classes = useStyles()
   const auth = useAuth()
   const { GoogleAuthProvider } = useAuth
-        const { showError } = useNotifications()
+  const { showError } = useNotifications()
 
   async function googleLogin() {
     const provider = new GoogleAuthProvider()
@@ -35,9 +35,9 @@ function LoginPage() {
         formValues.password
       )
       // NOTE: window.location used since history.push/replace does not always work
-            window.location = LIST_PATH
+      window.location = LIST_PATH
     } catch (err) {
-        showError(err.message)
+      showError(err.message)
     }
   }
 
