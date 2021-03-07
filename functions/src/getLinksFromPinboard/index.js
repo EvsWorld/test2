@@ -37,34 +37,35 @@ const dummyLinks = [
  * @returns {Promise}
  */
 async function getLinksFromPinboardEvent(context) {
-  console.log('Pub Sub message: ', { context })
-  const batch = db.batch()
+  // console.log('Pub Sub message: ', { context })
 
+  //  fetch all documents from pinboard
   const pinboardSecret = functions.config().pinboard.secret
   const pinboardUsername = functions.config().pinboard.username
-
   const linksResults = await axios.get(
     `http://feeds.pinboard.in/json/secret:${pinboardSecret}/u:${pinboardUsername}/t:tom`
   )
   const links = linksResults.data
-  console.log('links:>> ', links)
+  // console.log('links:>> ', links)
 
-  // writes
-  links.forEach((link) => {
-    const linkRef = admin.firestore().collection('links').doc()
-    batch.set(linkRef, link)
+  // TODO: get ref to where we want to save them (/users/{userId})
+
+  // TODO: function to loop over all the users in db,
+  links.forEach(async (linkData) => {
+    const linkCollectionRef = admin.firestore().collection('links')
+    const linkSnapshot = await linkCollectionRef
+      .where('u', '==', linkData.u)
+      .get()
+    if (linkSnapshot.empty) {
+      console.log('No mathing documents')
+      // linkSnapshot.set({ linkData })
+      linkCollectionRef.add(linkData)
+    }
   })
-
-  batch.commit()
 
   // End function execution by returning
   return null
 }
-// TODO: fetch all documents from pinboard
-
-// TODO: get ref to where we want to save them (/users/{userId})
-
-// TODO: function to loop over all the users in db,
 
 // call pinboard to get all their new links,
 

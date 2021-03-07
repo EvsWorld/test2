@@ -10,7 +10,7 @@ describe('getLinksFromPinboard PubSub Cloud Function (PubSub:onRun)', () => {
   //   functionsTest.cleanup()
   // })
 
-  it('should handle event', async () => {
+  it.only('should handle event', async () => {
     const results = await getLinksFromPinboard({})
     expect(results).to.be.null
   })
