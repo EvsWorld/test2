@@ -1,10 +1,8 @@
 import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
 import axios from 'axios'
-const db = admin.firestore()
 
-const pinboardSecret = ''
-const pinboardUsername = 'EHendrix'
+// eslint-disable-next-line no-unused-vars
 const dummyLinks = [
   {
     u: 'https://react-hook-form.com/',
