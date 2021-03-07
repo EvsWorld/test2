@@ -29,6 +29,12 @@ const dummyLinks = [
     t: ['mike', 'tom']
   }
 ]
+
+export const collectIdsAndDocs = (doc) => {
+  // turns these into documents that avoid some kind of trouble
+  return { id: doc.id, ...doc.data() }
+}
+
 /**
  * Handle getLinksFromPinboard pub sub event
  * @param {functions.pubsub.Context} context - Function context
@@ -36,38 +42,71 @@ const dummyLinks = [
  */
 async function getLinksFromPinboardEvent(context) {
   // console.log('Pub Sub message: ', { context })
-  // TODO: loop over all users
-  // const users.forEach(getLinksFromPinboard)
 
-  //  fetch all documents from pinboard
-  //  TODO: put this in function getLinksFromPinboard(user)
-  const pinboardSecret = functions.config().pinboard.secret
-  const pinboardUsername = functions.config().pinboard.username
-  const linksResults = await axios.get(
-    `http://feeds.pinboard.in/json/secret:${pinboardSecret}/u:${pinboardUsername}/t:tom`
-    // `http://feeds.pinboard.in/json/secret:${pinboardSecret}/u:${pinboardUsername}/t:${user}`
-  )
-  const links = linksResults.data
+  // TODO: loop over all users
+  /**
+   *
+   */
+  async function loopOverUsers() {
+    const snapshot = await admin.firestore().collection('users').get()
+    const users = snapshot.docs.map(collectIdsAndDocs)
+    // console.log('users :>> ', users)
+    users.forEach(saveLinks)
+  }
+  /**
+   * @param user
+   */
+  loopOverUsers()
+
+  /**
+   * @param userRef
+   * @param user
+   */
+  async function fetchLinks(user) {
+    //  fetch all documents from pinboard
+    //  TODO: put this in function getLinksFromPinboard(user)
+    const pinboardSecret = functions.config().pinboard.secret
+    const pinboardUsername = functions.config().pinboard.username
+    console.log(
+      'axios url :>> ',
+      `http://feeds.pinboard.in/json/secret:${pinboardSecret}/u:${pinboardUsername}/t:${user.username}`
+    )
+    const linksResults = await axios.get(
+      // `http://feeds.pinboard.in/json/secret:${pinboardSecret}/u:${pinboardUsername}/t:tom`
+      `http://feeds.pinboard.in/json/secret:${pinboardSecret}/u:${pinboardUsername}/t:${user.username}`
+    )
+    const links = linksResults.data
+    return links
+  }
 
   //  TODO: put this in function saveLinksToUser(user)
   //  saveLinksToUser(user) {
   // const userlinks = getLinksFromPinboard(user)
   // }
-  links.forEach(async (linkData) => {
-    const linkCollectionRef = admin.firestore().collection('links')
-    // TODO: get ref to where we want to save them (/users/{userId})
-    // TODO:    const linkCollectionRef = admin.firestore().collection(`${user}/backlog`)
+  /**
+   * @param user
+   */
+  async function saveLinks(user) {
+    const links = await fetchLinks(user)
+    links.forEach(async (linkData) => {
+      console.log({ id: user.id, username: user.username })
+      const userBacklog = admin
+        .firestore()
+        .collection('users')
+        .doc(user.id)
+        .collection('backlog')
 
-    const linkSnapshot = await linkCollectionRef
-      .where('u', '==', linkData.u)
-      .get()
-    if (linkSnapshot.empty) {
-      console.log('No mathing documents')
-      // linkSnapshot.set({ linkData })
-      linkCollectionRef.add(linkData)
-    }
-  })
-
+      const linkSnapshot = await userBacklog.where('u', '==', linkData.u).get()
+      if (linkSnapshot.empty) {
+        console.log('No matching documents')
+        try {
+          userBacklog.add(linkData)
+        } catch (error) {
+          console.error('error adding link to user backlog')
+        }
+      }
+    })
+  }
   // TODO: function sendMessage( ) {
   // send user a message with their url to their custom domain of my site, and
   // change the metadata to that url (done either something on the message or
