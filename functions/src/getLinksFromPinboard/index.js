@@ -93,9 +93,9 @@ async function getLinksFromPinboardEvent(context) {
     const links = await fetchLinks(user)
     links.forEach(async (linkData) => {
       // console.log({ id: user.id, username: user.username })
-      const userBacklog = getCollection(user, 'backlog')
+      const userBacklog = await getCollection(user, 'backlog')
 
-      await upsertLink(userBacklog, linkData)
+      upsertLink(userBacklog, linkData)
     })
   }
 
