@@ -2,33 +2,8 @@ import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
 import axios from 'axios'
 
-// eslint-disable-next-line no-unused-vars
-const dummyLinks = [
-  {
-    u: 'https://react-hook-form.com/',
-    d: 'Home | React Hook Form - Simple React forms validation',
-    n: '',
-    dt: '2021-03-04T09:49:02Z',
-    a: 'EHendrix',
-    t: ['tom', 'mike']
-  },
-  {
-    u: 'https://www.thepullrequest.com/p/the-american-dream-as-a-service',
-    d: 'The American-Dream-as-a-Service - The Pull Request',
-    n: null,
-    dt: '2021-03-04T01:31:08Z',
-    a: 'EHendrix',
-    t: ['dan', 'mike', 'puzzle-pieces', 'tom']
-  },
-  {
-    u: 'https://a16z.com/2021/02/27/nfts-and-a-thousand-true-fans/',
-    d: 'a16z.com',
-    n: '',
-    dt: '2021-03-04T00:52:02Z',
-    a: 'EHendrix',
-    t: ['mike', 'tom']
-  }
-]
+const db = admin.firestore()
+db.settings({ timestampsInSnapshots: true })
 
 export const collectIdsAndDocs = (doc) => {
   // turns these into documents that avoid some kind of trouble
@@ -43,31 +18,40 @@ export const collectIdsAndDocs = (doc) => {
 async function getLinksFromPinboardEvent(context) {
   // console.log('Pub Sub message: ', { context })
 
-  loopOverUsers(saveLinks)
-
-  // TODO:function that runs and checks if there is no link in user’s
-  // ‘sharedLinks’ that was created today. If not, then it will look in that
-  // user’s ‘backlog’ collection  for the link with the oldest link, copy it to
-  // the ‘sharedLinks’ collection and then delete it from backlog, then  and
-  // sends message
-
-  // TODO:  send user a message with their url to their custom domain of my site, and
-  // change the metadata to that url (done either something on the message or
-  // the url itself)
-  // function sendMessage( ) { }
+  loopOverUsers()
 
   // End function execution by returning
   return null
 
   /**
    * Loop over all users fetching and saving links
-   * @param cb
    */
-  async function loopOverUsers(cb) {
-    const snapshot = await admin.firestore().collection('users').get()
+  async function loopOverUsers() {
+    const snapshot = await db.collection('users').get()
     const users = snapshot.docs.map(collectIdsAndDocs)
     // console.log('users :>> ', users)
-    users.forEach(cb)
+    users.forEach(async (user) => {
+      saveLinks(user)
+      // TODO: 'newLink' function that runs and checks if there is no link in user’s
+      // ‘sharedLinks’ that was created today. If not, then it will look in that
+      // user’s ‘backlog’ collection  for the link with the oldest link, copy it to
+      // the ‘sharedLinks’ collection and then delete it from backlog, then  and
+      // sends message
+
+      // const sharedLinksCollectionRef = await getCollection(user, 'sharedLinks')
+      // const sharedLinksSnapshot = await sharedLinksCollectionRef
+      //   .where('dateCreated', '==', 'todays date')
+      //   .get()
+
+      // if (sharedLinksSnapshot.empty) {
+      //   console.log('No matching documents')
+      // }
+
+      // TODO:  send user a message with their url to their custom domain of my site, and
+      // change the metadata to that url (done either something on the message or
+      // the url itself)
+      // function sendMessage( ) { }
+    })
   }
 
   /**
@@ -79,6 +63,7 @@ async function getLinksFromPinboardEvent(context) {
     //  TODO: put this in function getLinksFromPinboard(user)
     const pinboardSecret = functions.config().pinboard.secret
     const pinboardUsername = functions.config().pinboard.username
+
     const linksResults = await axios.get(
       `http://feeds.pinboard.in/json/secret:${pinboardSecret}/u:${pinboardUsername}/t:${user.username}`
     )
@@ -94,9 +79,10 @@ async function getLinksFromPinboardEvent(context) {
     const links = await fetchLinks(user)
     links.forEach(async (linkData) => {
       // console.log({ id: user.id, username: user.username })
+      const linkDataToSave = { ...linkData, timeSavedToDb: new Date() }
       const userBacklog = await getCollection(user, 'backlog')
 
-      upsertLink(userBacklog, linkData)
+      upsertLink(userBacklog, linkDataToSave)
     })
   }
 
@@ -119,11 +105,7 @@ async function getLinksFromPinboardEvent(context) {
    * @returns {Promise} Resolves with sub collectionReference one level down from specified user
    */
   function getCollection(user, collection) {
-    return admin
-      .firestore()
-      .collection('users')
-      .doc(user.id)
-      .collection(collection)
+    return db.collection('users').doc(user.id).collection(collection)
   }
 }
 
