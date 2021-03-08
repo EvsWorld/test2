@@ -33,13 +33,15 @@ async function getLinksFromPinboardEvent(context) {
     users.forEach(async (user) => {
       saveLinks(user)
 
+      // TODO: put this in a function
       // If no link shared in the last day, look in that user’s ‘backlog’
       // collection  for the link with the oldest link, copy it to the
       // ‘sharedLinks’ collection and then delete it from backlog
       if (await shouldMoveLinkFromBacklogToSharedLinks(user)) {
-        console.log('now going to move link from backlog to sharedLinks!')
-        // TODO: go take the oldest like from backlog copy it to sharedLinks,
-        // then delete from backlog
+        console.log(
+          `NO LINKS FOUND in ${user.username}'s 'sharedLinks' collection added in the last ${user.shareInterval} day(s)! I'm going to move one.`
+        )
+        // go take the oldest like from backlog copy it to sharedLinks,
         const backlogCollectionRef = await getCollection(user, 'backlog')
           // asc: sort from older to newer
           // (however I could use 'desc' while developing so i can add new bookmarks clearly)
@@ -51,8 +53,10 @@ async function getLinksFromPinboardEvent(context) {
           ...collectIdsAndDocs(oldestLinkInBacklog.docs[0]),
           timeSavedToSharedLinks: new Date()
         }
-        console.log(`oldestLinkInBacklogWDate for ${user.username} :>> `)
-        console.dir(oldestLinkInBacklogWDate, { depth: null })
+        console.log(
+          `MOVING a link for ${user.username} :>> `,
+          oldestLinkInBacklogWDate
+        )
 
         const sharedLinksCollectionRef = await getCollection(
           user,
@@ -60,7 +64,10 @@ async function getLinksFromPinboardEvent(context) {
         )
 
         sharedLinksCollectionRef.add(oldestLinkInBacklogWDate)
+
+        // TODO: then delete from backlog
         // latestLinkFromBacklog.delete()
+
         // TODO:  send user a message with their url to their custom domain of my site, and
         // change the metadata to that url (done either something on the message or
         // the url itself)
@@ -75,13 +82,12 @@ async function getLinksFromPinboardEvent(context) {
    * @returns true or false
    */
   async function shouldMoveLinkFromBacklogToSharedLinks(user) {
-    const shareInterval = user.shareInterval // the frequency in days to share to that user
     const sharedLinksCollectionRef = await getCollection(user, 'sharedLinks')
     const sharedLinksSnapshot = await sharedLinksCollectionRef
       .where(
         'timeSavedToSharedLinks',
         '>=',
-        moment().subtract(shareInterval, 'day').toDate()
+        moment().subtract(user.shareInterval, 'day').toDate()
       )
       .where('timeSavedToSharedLinks', '<', moment().toDate())
       .get()
@@ -94,14 +100,11 @@ async function getLinksFromPinboardEvent(context) {
     }
 
     if (noLinksSharedRecently) {
-      console.log(
-        `NO LINKS FOUND in ${user.username}'s 'sharedLinks' collection added in the last ${shareInterval} day(s)! I'm going to move one.`
-      )
       return true
     } else {
       const foundLinks = sharedLinksSnapshot.docs
       console.log(
-        `FOUND ${foundLinks.length} LINKS in ${user.username}'s 'sharedLinks' collection added in the last ${shareInterval} day(s). I'm not moving anything.`
+        `FOUND ${foundLinks.length} LINKS in ${user.username}'s 'sharedLinks' collection added in the last ${user.shareInterval} day(s). I'm not moving anything.`
       )
       return false
     }
@@ -169,7 +172,7 @@ async function getLinksFromPinboardEvent(context) {
 }
 
 // const schedule = 'every 1 minutes'
-const schedule = '0 22 * * 1-7'
+const schedule = '0 22 * * *'
 
 /**
  * Cloud Function triggered on a specified CRON schedule
