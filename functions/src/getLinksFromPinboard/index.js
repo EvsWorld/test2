@@ -33,20 +33,17 @@ async function getLinksFromPinboardEvent(context) {
     users.forEach(async (user) => {
       saveLinks(user)
 
-      const shouldMoveLinkFromBacklogToSharedLinks = await wasLinkSharedRecently(
-        user
-      )
       // If no link shared in the last day, look in that user’s ‘backlog’
       // collection  for the link with the oldest link, copy it to the
       // ‘sharedLinks’ collection and then delete it from backlog
-      if (shouldMoveLinkFromBacklogToSharedLinks) {
+      if (await shouldMoveLinkFromBacklogToSharedLinks(user)) {
         console.log('now going to move link from backlog to sharedLinks!')
         // TODO: go take the oldest like from backlog copy it to sharedLinks,
         // then delete from backlog
         const backlogCollectionRef = await getCollection(user, 'backlog')
           // asc: sort from older to newer
-          // (however I'm using desc while developing so i can add new bookmarks clearly)
-          .orderBy('timeSavedToDb', 'desc')
+          // (however I could use 'desc' while developing so i can add new bookmarks clearly)
+          .orderBy('timeSavedToDb', 'asc')
           .limit(1) // get the top one
         const oldestLinkInBacklog = await backlogCollectionRef.get()
 
@@ -77,7 +74,7 @@ async function getLinksFromPinboardEvent(context) {
    * @param user
    * @returns true or false
    */
-  async function wasLinkSharedRecently(user) {
+  async function shouldMoveLinkFromBacklogToSharedLinks(user) {
     const shareInterval = user.shareInterval // the frequency in days to share to that user
     const sharedLinksCollectionRef = await getCollection(user, 'sharedLinks')
     const sharedLinksSnapshot = await sharedLinksCollectionRef
@@ -89,17 +86,24 @@ async function getLinksFromPinboardEvent(context) {
       .where('timeSavedToSharedLinks', '<', moment().toDate())
       .get()
 
-    if (sharedLinksSnapshot.empty) {
+    const noLinksSharedRecently =
+      !sharedLinksSnapshot || sharedLinksSnapshot.empty
+
+    if (!sharedLinksSnapshot) {
+      console.log('!sharedLinksSnapshot = true')
+    }
+
+    if (noLinksSharedRecently) {
       console.log(
-        `No links in ${user.username}'s 'sharedLinks' collection added in the last ${shareInterval} day(s)!`
+        `NO LINKS FOUND in ${user.username}'s 'sharedLinks' collection added in the last ${shareInterval} day(s)! I'm going to move one.`
       )
-      return false
+      return true
     } else {
       const foundLinks = sharedLinksSnapshot.docs
       console.log(
-        `found ${foundLinks.length} links in ${user.username}'s 'sharedLinks' collection added in the last ${shareInterval} day(s) >> `
+        `FOUND ${foundLinks.length} LINKS in ${user.username}'s 'sharedLinks' collection added in the last ${shareInterval} day(s). I'm not moving anything.`
       )
-      return true
+      return false
     }
   }
 
