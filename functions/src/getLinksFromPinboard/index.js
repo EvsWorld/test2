@@ -61,6 +61,7 @@ async function getLinksFromPinboardEvent(context) {
 
   /**
    * Loop over all users fetching and saving links
+   * @param cb
    */
   async function loopOverUsers(cb) {
     const snapshot = await admin.firestore().collection('users').get()
@@ -108,11 +109,7 @@ async function getLinksFromPinboardEvent(context) {
     const linkSnapshot = await collection.where('u', '==', linkData.u).get()
     if (linkSnapshot.empty) {
       console.log('No matching documents')
-      try {
-        collection.add(linkData)
-      } catch (error) {
-        console.error('error adding link to user backlog')
-      }
+      collection.add(linkData)
     }
   }
 
@@ -129,7 +126,6 @@ async function getLinksFromPinboardEvent(context) {
       .collection(collection)
   }
 }
-
 
 // const schedule = 'every 1 minutes'
 const schedule = '* * * * *'
