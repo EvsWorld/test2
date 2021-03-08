@@ -44,14 +44,11 @@ async function getLinksFromPinboardEvent(context) {
         // TODO: go take the oldest like from backlog copy it to sharedLinks,
         // then delete from backlog
         const backlogCollectionRef = await getCollection(user, 'backlog')
-          .orderBy('timeSavedToDb', 'asc') // sort from older to newer
+          // asc: sort from older to newer
+          // (however I'm using desc while developing so i can add new bookmarks clearly)
+          .orderBy('timeSavedToDb', 'desc')
           .limit(1) // get the top one
         const oldestLinkInBacklog = await backlogCollectionRef.get()
-
-        // console.log(
-        //   'oldestLinkInBacklog :>> ',
-        //   oldestLinkInBacklog.docs[0].data()
-        // )
 
         const oldestLinkInBacklogWDate = {
           ...collectIdsAndDocs(oldestLinkInBacklog.docs[0]),
@@ -60,12 +57,12 @@ async function getLinksFromPinboardEvent(context) {
         console.log(`oldestLinkInBacklogWDate for ${user.username} :>> `)
         console.dir(oldestLinkInBacklogWDate, { depth: null })
 
-        // const sharedLinksCollectionRef = await getCollection(
-        //   user,
-        //   'sharedLinks'
-        // )
+        const sharedLinksCollectionRef = await getCollection(
+          user,
+          'sharedLinks'
+        )
 
-        // sharedLinksCollectionRef.add(linkToSave)
+        sharedLinksCollectionRef.add(oldestLinkInBacklogWDate)
         // latestLinkFromBacklog.delete()
         // TODO:  send user a message with their url to their custom domain of my site, and
         // change the metadata to that url (done either something on the message or
@@ -85,25 +82,24 @@ async function getLinksFromPinboardEvent(context) {
     const sharedLinksCollectionRef = await getCollection(user, 'sharedLinks')
     const sharedLinksSnapshot = await sharedLinksCollectionRef
       .where(
-        'timeSavedToDb',
+        'timeSavedToSharedLinks',
         '>=',
         moment().subtract(shareInterval, 'day').toDate()
       )
-      .where('timeSavedToDb', '<', moment().toDate())
+      .where('timeSavedToSharedLinks', '<', moment().toDate())
       .get()
 
     if (sharedLinksSnapshot.empty) {
       console.log(
         `No links in ${user.username}'s 'sharedLinks' collection added in the last ${shareInterval} day(s)!`
       )
-      // TODO: return false
+      return false
     } else {
       const foundLinks = sharedLinksSnapshot.docs
       console.log(
         `found ${foundLinks.length} links in ${user.username}'s 'sharedLinks' collection added in the last ${shareInterval} day(s) >> `
       )
       return true
-      // foundLinks.forEach((link) => console.log(link.data()))
     }
   }
 
@@ -132,23 +128,29 @@ async function getLinksFromPinboardEvent(context) {
     const links = await fetchLinks(user)
     links.forEach(async (linkData) => {
       const linkDataToSave = { ...linkData, timeSavedToDb: new Date() }
-      const userBacklog = await getCollection(user, 'backlog')
-      upsertLink(userBacklog, linkDataToSave)
+      upsertLink(user, linkDataToSave)
     })
   }
 
   /**
    * Check if a link with that url already exists, if not then add it
-   * @param {admin.firstore.CollectionReference} collection - User backlog collection reference
+   * @param {object} user - individual user object from firebase, with Id added
    * @param {object} linkData - link data to insert from pinboard
    */
-  async function upsertLink(collection, linkData) {
-    const linkSnapshot = await collection.where('u', '==', linkData.u).get()
-    if (linkSnapshot.empty) {
+  async function upsertLink(user, linkData) {
+    const backlogCollection = await getCollection(user, 'backlog')
+    const sharedLinksCollection = await getCollection(user, 'sharedLinks')
+    const queryOfSharedLinksForNewLink = await backlogCollection
+      .where('u', '==', linkData.u)
+      .get()
+    const queryOfBacklogForNewLink = await sharedLinksCollection
+      .where('u', '==', linkData.u)
+      .get()
+    if (queryOfBacklogForNewLink.empty && queryOfSharedLinksForNewLink.empty) {
       console.log(
         `Attempting to insert link: ${linkData.u} . It didn't exist so I'm going to add it now.`
       )
-      collection.add(linkData)
+      backlogCollection.add(linkData)
     }
   }
 
