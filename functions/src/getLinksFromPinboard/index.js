@@ -43,7 +43,30 @@ async function getLinksFromPinboardEvent(context) {
         console.log('now going to move link from backlog to sharedLinks!')
         // TODO: go take the oldest like from backlog copy it to sharedLinks,
         // then delete from backlog
+        const backlogCollectionRef = await getCollection(user, 'backlog')
+          .orderBy('timeSavedToDb', 'asc') // sort from older to newer
+          .limit(1) // get the top one
+        const oldestLinkInBacklog = await backlogCollectionRef.get()
 
+        // console.log(
+        //   'oldestLinkInBacklog :>> ',
+        //   oldestLinkInBacklog.docs[0].data()
+        // )
+
+        const oldestLinkInBacklogWDate = {
+          ...collectIdsAndDocs(oldestLinkInBacklog.docs[0]),
+          timeSavedToSharedLinks: new Date()
+        }
+        console.log(`oldestLinkInBacklogWDate for ${user.username} :>> `)
+        console.dir(oldestLinkInBacklogWDate, { depth: null })
+
+        // const sharedLinksCollectionRef = await getCollection(
+        //   user,
+        //   'sharedLinks'
+        // )
+
+        // sharedLinksCollectionRef.add(linkToSave)
+        // latestLinkFromBacklog.delete()
         // TODO:  send user a message with their url to their custom domain of my site, and
         // change the metadata to that url (done either something on the message or
         // the url itself)
@@ -122,7 +145,9 @@ async function getLinksFromPinboardEvent(context) {
   async function upsertLink(collection, linkData) {
     const linkSnapshot = await collection.where('u', '==', linkData.u).get()
     if (linkSnapshot.empty) {
-      console.log('No matching documents')
+      console.log(
+        `Attempting to insert link: ${linkData.u} . It didn't exist so I'm going to add it now.`
+      )
       collection.add(linkData)
     }
   }
@@ -138,7 +163,7 @@ async function getLinksFromPinboardEvent(context) {
 }
 
 // const schedule = 'every 1 minutes'
-const schedule = '* * * * *'
+const schedule = '0 22 * * 1-7'
 
 /**
  * Cloud Function triggered on a specified CRON schedule
