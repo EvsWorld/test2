@@ -32,40 +32,56 @@ async function getLinksFromPinboardEvent(context) {
     // console.log('users :>> ', users)
     users.forEach(async (user) => {
       saveLinks(user)
-      // TODO: 'newLink' function that runs and checks if there is no link in user’s
-      // ‘sharedLinks’ that was created today. If not, then it will look in that
-      // user’s ‘backlog’ collection  for the link with the oldest link, copy it to
-      // the ‘sharedLinks’ collection and then delete it from backlog, then  and
-      // sends message
 
-      // TODO: refactor this into decision function
-      const sharedLinksCollectionRef = await getCollection(user, 'sharedLinks')
-      const sharedLinksSnapshot = await sharedLinksCollectionRef
-        .where('timeSavedToDb', '>=', moment().subtract(1, 'day').toDate())
-        .where('timeSavedToDb', '<', moment().toDate())
-        .get()
-
-      if (sharedLinksSnapshot.empty) {
-        console.log(
-          `No links in ${user.username}'s 'sharedLinks' collection added in the last day!`
-        )
+      const shouldMoveLinkFromBacklogToSharedLinks = await wasLinkSharedRecently(
+        user
+      )
+      // If no link shared in the last day, look in that user’s ‘backlog’
+      // collection  for the link with the oldest link, copy it to the
+      // ‘sharedLinks’ collection and then delete it from backlog
+      if (shouldMoveLinkFromBacklogToSharedLinks) {
+        console.log('now going to move link from backlog to sharedLinks!')
         // TODO: go take the oldest like from backlog copy it to sharedLinks,
         // then delete from backlog
-      } else {
-        const foundLinks = sharedLinksSnapshot.docs
-        console.log(
-          `found ${foundLinks.length} links in ${user.username}'s 'sharedLinks' collection added in the last day >> `
-        )
-        // foundLinks.forEach((link) => console.log(link.data()))
+
+        // TODO:  send user a message with their url to their custom domain of my site, and
+        // change the metadata to that url (done either something on the message or
+        // the url itself)
+        // function sendMessage( ) { }
       }
-
-     
-
-      // TODO:  send user a message with their url to their custom domain of my site, and
-      // change the metadata to that url (done either something on the message or
-      // the url itself)
-      // function sendMessage( ) { }
     })
+  }
+
+  /**
+   * checkks if there is no link in user’s ‘sharedLinks’ that was created today.
+   * @param user
+   * @returns true or false
+   */
+  async function wasLinkSharedRecently(user) {
+    const shareInterval = user.shareInterval // the frequency in days to share to that user
+    const sharedLinksCollectionRef = await getCollection(user, 'sharedLinks')
+    const sharedLinksSnapshot = await sharedLinksCollectionRef
+      .where(
+        'timeSavedToDb',
+        '>=',
+        moment().subtract(shareInterval, 'day').toDate()
+      )
+      .where('timeSavedToDb', '<', moment().toDate())
+      .get()
+
+    if (sharedLinksSnapshot.empty) {
+      console.log(
+        `No links in ${user.username}'s 'sharedLinks' collection added in the last ${shareInterval} day(s)!`
+      )
+      // TODO: return false
+    } else {
+      const foundLinks = sharedLinksSnapshot.docs
+      console.log(
+        `found ${foundLinks.length} links in ${user.username}'s 'sharedLinks' collection added in the last ${shareInterval} day(s) >> `
+      )
+      return true
+      // foundLinks.forEach((link) => console.log(link.data()))
+    }
   }
 
   /**
