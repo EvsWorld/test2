@@ -1,9 +1,9 @@
 import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
 import axios from 'axios'
+import moment from 'moment'
 
 const db = admin.firestore()
-db.settings({ timestampsInSnapshots: true })
 
 export const collectIdsAndDocs = (doc) => {
   // turns these into documents that avoid some kind of trouble
@@ -38,14 +38,28 @@ async function getLinksFromPinboardEvent(context) {
       // the ‘sharedLinks’ collection and then delete it from backlog, then  and
       // sends message
 
-      // const sharedLinksCollectionRef = await getCollection(user, 'sharedLinks')
-      // const sharedLinksSnapshot = await sharedLinksCollectionRef
-      //   .where('dateCreated', '==', 'todays date')
-      //   .get()
+      // TODO: refactor this into decision function
+      const sharedLinksCollectionRef = await getCollection(user, 'sharedLinks')
+      const sharedLinksSnapshot = await sharedLinksCollectionRef
+        .where('timeSavedToDb', '>=', moment().subtract(1, 'day').toDate())
+        .where('timeSavedToDb', '<', moment().toDate())
+        .get()
 
-      // if (sharedLinksSnapshot.empty) {
-      //   console.log('No matching documents')
-      // }
+      if (sharedLinksSnapshot.empty) {
+        console.log(
+          `No links in ${user.username}'s 'sharedLinks' collection added in the last day!`
+        )
+        // TODO: go take the oldest like from backlog copy it to sharedLinks,
+        // then delete from backlog
+      } else {
+        const foundLinks = sharedLinksSnapshot.docs
+        console.log(
+          `found ${foundLinks.length} links in ${user.username}'s 'sharedLinks' collection added in the last day >> `
+        )
+        // foundLinks.forEach((link) => console.log(link.data()))
+      }
+
+     
 
       // TODO:  send user a message with their url to their custom domain of my site, and
       // change the metadata to that url (done either something on the message or
@@ -78,10 +92,8 @@ async function getLinksFromPinboardEvent(context) {
   async function saveLinks(user) {
     const links = await fetchLinks(user)
     links.forEach(async (linkData) => {
-      // console.log({ id: user.id, username: user.username })
       const linkDataToSave = { ...linkData, timeSavedToDb: new Date() }
       const userBacklog = await getCollection(user, 'backlog')
-
       upsertLink(userBacklog, linkDataToSave)
     })
   }

@@ -5,6 +5,7 @@ const admin = require('firebase-admin')
 // Initialize firebase-admin so it is available within functions
 try {
   admin.initializeApp()
+  admin.firestore().settings({ timestampsInSnapshots: true })
 } catch (err) {
   /* istanbul ignore next: not called in tests */
   console.error(

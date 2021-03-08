@@ -26,4 +26,5 @@ const [servicePath, portStr] = FIRESTORE_EMULATOR_HOST.split(':')
 admin.firestore().settings({
   servicePath,
   port: parseInt(portStr, 10)
+  // timestampsInSnapshots: true
 })
