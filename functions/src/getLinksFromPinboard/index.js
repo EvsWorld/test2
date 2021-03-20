@@ -32,50 +32,50 @@ async function getLinksFromPinboardEvent(context) {
     // console.log('users :>> ', users)
     users.forEach(async (user) => {
       saveLinks(user)
-
-      // TODO: put this in a function
-      // If no link shared in the last day, look in that user’s ‘backlog’
-      // collection  for the link with the oldest link, copy it to the
-      // ‘sharedLinks’ collection and then delete it from backlog
-      if (await shouldMoveLinkFromBacklogToSharedLinks(user)) {
-        console.log(
-          `NO LINKS FOUND in ${user.username}'s 'sharedLinks' collection added in the last ${user.shareInterval} day(s)! I'm going to move one.`
-        )
-        // go take the oldest like from backlog copy it to sharedLinks,
-        const backlogCollectionRef = await getCollection(user, 'backlog')
-          // asc: sort from older to newer
-          // (however I could use 'desc' while developing so i can add new bookmarks clearly)
-          .orderBy('timeSavedToDb', 'asc')
-          .limit(1) // get the top one
-        const linkToMoveFromBacklog = await backlogCollectionRef.get()
-
-        const oldestLinkInBacklogWDate = {
-          ...collectIdsAndDocs(linkToMoveFromBacklog.docs[0]),
-          timeSavedToSharedLinks: new Date()
-        }
-        console.log(
-          `MOVING a link for ${user.username} :>> `,
-          oldestLinkInBacklogWDate
-        )
-
-        const sharedLinksCollectionRef = await getCollection(
-          user,
-          'sharedLinks'
-        )
-
-        sharedLinksCollectionRef.add(oldestLinkInBacklogWDate)
-
-        // TODO: then delete from backlog
-        // latestLinkFromBacklog.delete()
-
-        // TODO:  send user a message with their url to their custom domain of my site, and
-        // change the metadata to that url (done either something on the message or
-        // the url itself)
-        // function sendMessage( ) { }
-      }
+      moveLink(user)
+      // TODO:  send user a message with their url to their custom domain of my site, and
+      // change the metadata to that url (done either something on the message or
+      // the url itself)
+      // function sendMessage( ) { }
     })
   }
+  /**
+   * @param user
+   */
+  async function moveLink(user) {
+    // TODO: put this in a function
+    // If no link shared in the last day, look in that user’s ‘backlog’
+    // collection  for the link with the oldest link, copy it to the
+    // ‘sharedLinks’ collection and then delete it from backlog
+    if (await shouldMoveLinkFromBacklogToSharedLinks(user)) {
+      console.log(
+        `NO LINKS FOUND in ${user.username}'s 'sharedLinks' collection added in the last ${user.shareInterval} day(s)! I'm going to move one.`
+      )
+      // go take the oldest like from backlog copy it to sharedLinks,
+      const backlogCollectionRef = await getCollection(user, 'backlog')
+        // asc: sort from older to newer
+        // (however I could use 'desc' while developing so i can add new bookmarks clearly)
+        .orderBy('timeSavedToDb', 'asc')
+        .limit(1) // get the top one
+      const linkToMoveFromBacklog = await backlogCollectionRef.get()
 
+      const oldestLinkInBacklogWDate = {
+        ...collectIdsAndDocs(linkToMoveFromBacklog.docs[0]),
+        timeSavedToSharedLinks: new Date()
+      }
+      console.log(
+        `MOVING a link for ${user.username} :>> `,
+        oldestLinkInBacklogWDate
+      )
+
+      const sharedLinksCollectionRef = await getCollection(user, 'sharedLinks')
+
+      sharedLinksCollectionRef.add(oldestLinkInBacklogWDate)
+
+      // TODO: then delete from backlog
+      // latestLinkFromBacklog.delete()
+    }
+  }
   /**
    * checkks if there is no link in user’s ‘sharedLinks’ that was created today.
    * @param user
