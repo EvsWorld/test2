@@ -46,18 +46,20 @@ function ViewLinksPage() {
       <span>ViewLinks Component</span>
 
       <div className={classes.tiles}>
+        {/* // TODO: component for the top link. Includes this iframe */}
         <iframe
           sandbox="allow-scripts"
           width="100%"
           id="preview"
           height="600"
-          src={
-            (links && links[0]?.u) ||
-            'https://marketplace.visualstudio.com/items?itemName=orepor.color-tabs-vscode-ext'
-          }></iframe>
+          src={links && links[0]?.u}></iframe>
         {links &&
           links.map((link, ind) => {
-            return <div key={`Link-${link.uid}-${ind}`}>{link.u}</div>
+            return (
+              <div key={`Link-${link.uid}-${ind}`}>
+                <a href={link.u}>{link.u}</a>
+              </div>
+            )
           })}
       </div>
     </div>

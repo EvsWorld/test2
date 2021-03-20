@@ -37,8 +37,7 @@ async function getLinksFromPinboardEvent(context) {
       // If no link shared in the last day, look in that user’s ‘backlog’
       // collection  for the link with the oldest link, copy it to the
       // ‘sharedLinks’ collection and then delete it from backlog
-      // if (await shouldMoveLinkFromBacklogToSharedLinks(user)) {
-      if (true === true) {
+      if (await shouldMoveLinkFromBacklogToSharedLinks(user)) {
         console.log(
           `NO LINKS FOUND in ${user.username}'s 'sharedLinks' collection added in the last ${user.shareInterval} day(s)! I'm going to move one.`
         )
