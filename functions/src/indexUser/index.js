@@ -51,7 +51,7 @@ async function indexUser(change, context) {
   try {
     await publicProfileRef.set(
       {
-        displayName: newData.displayName
+        displayName: newData.displayName,
       },
       { merge: true }
     )

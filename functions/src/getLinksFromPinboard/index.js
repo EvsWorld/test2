@@ -37,7 +37,8 @@ async function getLinksFromPinboardEvent(context) {
       // If no link shared in the last day, look in that user’s ‘backlog’
       // collection  for the link with the oldest link, copy it to the
       // ‘sharedLinks’ collection and then delete it from backlog
-      if (await shouldMoveLinkFromBacklogToSharedLinks(user)) {
+      // if (await shouldMoveLinkFromBacklogToSharedLinks(user)) {
+      if (true === true) {
         console.log(
           `NO LINKS FOUND in ${user.username}'s 'sharedLinks' collection added in the last ${user.shareInterval} day(s)! I'm going to move one.`
         )
@@ -47,10 +48,10 @@ async function getLinksFromPinboardEvent(context) {
           // (however I could use 'desc' while developing so i can add new bookmarks clearly)
           .orderBy('timeSavedToDb', 'asc')
           .limit(1) // get the top one
-        const oldestLinkInBacklog = await backlogCollectionRef.get()
+        const linkToMoveFromBacklog = await backlogCollectionRef.get()
 
         const oldestLinkInBacklogWDate = {
-          ...collectIdsAndDocs(oldestLinkInBacklog.docs[0]),
+          ...collectIdsAndDocs(linkToMoveFromBacklog.docs[0]),
           timeSavedToSharedLinks: new Date()
         }
         console.log(
