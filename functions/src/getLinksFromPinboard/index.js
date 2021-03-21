@@ -2,6 +2,7 @@ import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
 import axios from 'axios'
 import moment from 'moment'
+import twilio from 'twilio'
 
 const db = admin.firestore()
 
@@ -17,9 +18,7 @@ export const collectIdsAndDocs = (doc) => {
  */
 async function getLinksFromPinboardEvent(context) {
   // console.log('Pub Sub message: ', { context })
-
   loopOverUsers()
-
   // End function execution by returning
   return null
 
@@ -33,10 +32,6 @@ async function getLinksFromPinboardEvent(context) {
     users.forEach(async (user) => {
       saveLinks(user)
       moveLink(user)
-      // TODO:  send user a message with their url to their custom domain of my site, and
-      // change the metadata to that url (done either something on the message or
-      // the url itself)
-      // function sendMessage( ) { }
     })
   }
   /**
@@ -74,6 +69,11 @@ async function getLinksFromPinboardEvent(context) {
 
       // TODO: then delete from backlog
       // latestLinkFromBacklog.delete()
+
+      // TODO:  send user a message with their url to their custom domain of my site, and
+      // change the metadata to that url (done either something on the message or
+      // the url itself)
+      // function sendMessage( ) { }
     }
   }
   /**

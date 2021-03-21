@@ -29,7 +29,8 @@
     "firebase-functions": "^3.13.1",
     "glob": "^7.1.6",
     "moment": "^2.29.1",
-    "request-promise": "^4.2.6"
+    "request-promise": "^4.2.6",
+    "twilio": "^3.58.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.13",
