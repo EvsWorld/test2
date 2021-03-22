@@ -2,7 +2,6 @@ import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
 import axios from 'axios'
 import moment from 'moment'
-import twilio from 'twilio'
 
 const db = admin.firestore()
 
@@ -34,8 +33,9 @@ async function getLinksFromPinboardEvent(context) {
       moveLink(user)
     })
   }
+
   /**
-   * @param user
+   * @param {object} user user
    */
   async function moveLink(user) {
     // TODO: put this in a function
@@ -78,8 +78,8 @@ async function getLinksFromPinboardEvent(context) {
   }
   /**
    * checkks if there is no link in user’s ‘sharedLinks’ that was created today.
-   * @param user
-   * @returns true or false
+   * @param {object} user user
+   * @returns {boolean} true or false
    */
   async function shouldMoveLinkFromBacklogToSharedLinks(user) {
     const sharedLinksCollectionRef = await getCollection(user, 'sharedLinks')
@@ -163,7 +163,7 @@ async function getLinksFromPinboardEvent(context) {
 
   /**
    * @param {object} user - individual user object from firebase, with Id added
-   * @param collection
+   * @param {any} collection collection you want
    * @returns {Promise} Resolves with sub collectionReference one level down from specified user
    */
   function getCollection(user, collection) {
