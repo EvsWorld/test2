@@ -141,8 +141,7 @@ jobs:
 
       - name: Build App
         run: |
-          REACT_APP_IFRAMELY_API_KEY: ${{secrets.REACT_APP_IFRAMELY_API_KEY}}
-          yarn build
+          REACT_APP_IFRAMELY_API_KEY: ${{secrets.REACT_APP_IFRAMELY_API_KEY}} yarn build
 
       # Archive build in case it needs to be downloaded later for debugging
       - name: Archive Build Artifact
