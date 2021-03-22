@@ -3,9 +3,11 @@ import * as admin from 'firebase-admin'
 import axios from 'axios'
 import moment from 'moment'
 
+admin.initializeApp()
+
 const db = admin.firestore()
 
-export const collectIdsAndDocs = (doc) => {
+const collectIdsAndDocs = (doc) => {
   // turns these into documents that avoid some kind of trouble
   return { id: doc.id, ...doc.data() }
 }

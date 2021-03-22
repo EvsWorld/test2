@@ -155,6 +155,7 @@ jobs:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           GITHUB_REF: ${{ github.ref }}
           GITHUB_HEAD_REF: ${{ github.head_ref }}
+          REACT_APP_IFRAMELY_API_KEY: ${{secrets.REACT_APP_IFRAMELY_API_KEY}}
         # Deploy to project associated with branch name alias in .firebaserc.
         # Force flag is used to automatically delete any removed cloud functions
         run: |
