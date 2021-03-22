@@ -6,7 +6,7 @@
   "scripts": {
     "build": "react-scripts build",
     "eject": "react-scripts eject",
-    "start": "HTTPS=true REACT_APP_API_KEY=636ef32f49e67e433f0d0a react-scripts start",
+    "start": "react-scripts start",
     "start:dist": "npm run build && firebase emulators:start --only hosting",
     "start:emulate": "cross-env REACT_APP_FIREBASE_DATABASE_EMULATOR_HOST=\"localhost:$(cat firebase.json | jq .emulators.database.port)\" REACT_APP_FIRESTORE_EMULATOR_HOST=\"localhost:$(cat firebase.json | jq .emulators.firestore.port)\" npm run start",
     "test": "react-scripts test",
