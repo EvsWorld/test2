@@ -141,6 +141,7 @@ jobs:
 
       - name: Build App
         run: |
+          REACT_APP_IFRAMELY_API_KEY: ${{secrets.REACT_APP_IFRAMELY_API_KEY}}
           yarn build
 
       # Archive build in case it needs to be downloaded later for debugging
@@ -155,7 +156,6 @@ jobs:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           GITHUB_REF: ${{ github.ref }}
           GITHUB_HEAD_REF: ${{ github.head_ref }}
-          REACT_APP_IFRAMELY_API_KEY: ${{secrets.REACT_APP_IFRAMELY_API_KEY}}
         # Deploy to project associated with branch name alias in .firebaserc.
         # Force flag is used to automatically delete any removed cloud functions
         run: |
