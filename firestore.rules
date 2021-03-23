@@ -27,5 +27,9 @@ service cloud.firestore {
         allow read, write: if isOwner(get(/databases/$(database)/documents/projects/$(projectId)));
       }
     }
+    // Links
+    match /users/{userId}/sharedLinks/{pid} {
+      allow read;
+    }
   }
 }
