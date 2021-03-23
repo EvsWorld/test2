@@ -3,9 +3,7 @@ import * as admin from 'firebase-admin'
 import axios from 'axios'
 import moment from 'moment'
 
-admin.initializeApp()
-
-const db = admin.firestore()
+// const db = admin.firestore()
 
 const collectIdsAndDocs = (doc) => {
   // turns these into documents that avoid some kind of trouble
@@ -27,7 +25,7 @@ async function getLinksFromPinboardEvent(context) {
    * Loop over all users fetching and saving links
    */
   async function loopOverUsers() {
-    const snapshot = await db.collection('users').get()
+    const snapshot = await admin.firestore().collection('users').get()
     const users = snapshot.docs.map(collectIdsAndDocs)
     // console.log('users :>> ', users)
     users.forEach(async (user) => {
@@ -169,7 +167,11 @@ async function getLinksFromPinboardEvent(context) {
    * @returns {Promise} Resolves with sub collectionReference one level down from specified user
    */
   function getCollection(user, collection) {
-    return db.collection('users').doc(user.id).collection(collection)
+    return admin
+      .firestore()
+      .collection('users')
+      .doc(user.id)
+      .collection(collection)
   }
 }
 
