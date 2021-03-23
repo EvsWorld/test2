@@ -1,14 +1,17 @@
 import React from 'react'
-import { makeStyles } from '@material-ui/core/styles'
 import { useFirestore, useUser, useFirestoreCollectionData } from 'reactfire'
-// import ProjectTile from '../ProjectTile'
-import styles from './ViewLinksPage.styles'
+import styled from 'styled-components'
 import { DisplayIframe } from './DisplayIframe'
 import { USERS_COLLECTION } from 'constants/firebasePaths'
-const useStyles = makeStyles(styles)
+
+const LinksContainer = styled.div`
+  display: flex;
+  ${'' /* align-items: center; */}
+  flex-direction: column;
+`
 
 function useLinksList() {
-  // const sharedLinksCollection = await getCollection(user, 'sharedLinks')
+  // TODO: put all this in useEffect
   // Get current user (loading handled by Suspense in ProjectsList)
   const { data: auth } = useUser()
   console.log('auth.uid :>> ', auth.uid)
@@ -30,16 +33,16 @@ function useLinksList() {
 }
 
 function ViewLinksPage() {
-  const classes = useStyles()
+  // TODO: put this in state, set in useeffect
   const { links } = useLinksList()
   const topLinka = links.shift().u
   const restOfLinks = links
 
   return (
-    <div className={classes.root}>
+    <div>
       <span>ViewLinks Component</span>
 
-      <div className={classes.tiles}>
+      <LinksContainer>
         <DisplayIframe topLink={topLinka} />
         {restOfLinks &&
           restOfLinks.map((link, ind) => {
@@ -50,7 +53,7 @@ function ViewLinksPage() {
               </div>
             )
           })}
-      </div>
+      </LinksContainer>
     </div>
   )
 }

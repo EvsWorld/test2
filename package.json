@@ -48,7 +48,8 @@
     "react-hook-form": "^6.15.1",
     "react-router-dom": "^5.2.0",
     "reactfire": "^3.0.0-rc.0",
-    "stackdriver-errors-js": "^0.8.0"
+    "stackdriver-errors-js": "^0.8.0",
+    "styled-components": "^5.2.1"
   },
   "devDependencies": {
     "@sentry/cli": "^1.62.0",

@@ -1,6 +1,11 @@
 import PropTypes from 'prop-types'
 import React, { useState, useEffect } from 'react'
+import styled from 'styled-components'
 import axios from 'axios'
+
+const Iframe = styled.div`
+  max-width: 1000px;
+`
 
 export function DisplayIframe({ topLink }) {
   const [iframeHtml, setIframeHtml] = useState(null)
@@ -43,7 +48,7 @@ export function DisplayIframe({ topLink }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   return (
-    <div
+    <Iframe
       dangerouslySetInnerHTML={{
         __html: iframeHtml
       }}

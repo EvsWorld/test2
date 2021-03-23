@@ -4,7 +4,7 @@ import { useAuth } from 'reactfire'
 import Paper from '@material-ui/core/Paper'
 import { makeStyles } from '@material-ui/core/styles'
 import GoogleButton from 'react-google-button'
-import { SIGNUP_PATH, LIST_PATH } from 'constants/paths'
+import { SIGNUP_PATH, VIEW_LINKS_PATH } from 'constants/paths'
 import useNotifications from 'modules/notification/useNotifications'
 import LoginForm from '../LoginForm'
 import styles from './LoginPage.styles'
@@ -22,7 +22,7 @@ function LoginPage() {
     try {
       await auth.signInWithPopup(provider)
       // NOTE: window.location used since history.push/replace does not always work
-      window.location = LIST_PATH
+      window.location = VIEW_LINKS_PATH
     } catch (err) {
       showError(err.message)
     }
@@ -35,7 +35,7 @@ function LoginPage() {
         formValues.password
       )
       // NOTE: window.location used since history.push/replace does not always work
-      window.location = LIST_PATH
+      window.location = VIEW_LINKS_PATH
     } catch (err) {
       showError(err.message)
     }
