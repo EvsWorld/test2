@@ -5,6 +5,7 @@ import axios from 'axios'
 
 const Iframe = styled.div`
   max-width: 1000px;
+  max-height: 100px;
 `
 
 export function DisplayIframe({ topLink }) {
@@ -47,6 +48,7 @@ export function DisplayIframe({ topLink }) {
       })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  // TODO: check if resonse is 404, if so then display just the url
   return (
     <Iframe
       dangerouslySetInnerHTML={{

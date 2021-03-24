@@ -52,10 +52,12 @@ async function getLinksFromPinboardEvent(context) {
         // (however I could use 'desc' while developing so i can add new bookmarks clearly)
         .orderBy('timeSavedToDb', 'asc')
         .limit(1) // get the top one
-      const linkToMoveFromBacklog = await backlogCollectionRef.get()
+      const linksToMoveFromBacklog = await backlogCollectionRef.get()
+      const linkToMoveFromBacklog = linksToMoveFromBacklog.docs[0]
+      // console.log('linkToMoveFromBacklog :>> ', linkToMoveFromBacklog)
 
       const oldestLinkInBacklogWDate = {
-        ...collectIdsAndDocs(linkToMoveFromBacklog.docs[0]),
+        ...collectIdsAndDocs(linkToMoveFromBacklog),
         timeSavedToSharedLinks: new Date()
       }
       console.log(
@@ -68,7 +70,8 @@ async function getLinksFromPinboardEvent(context) {
       sharedLinksCollectionRef.add(oldestLinkInBacklogWDate)
 
       // TODO: then delete from backlog
-      // latestLinkFromBacklog.delete()
+      const deleted = await linkToMoveFromBacklog.ref.delete()
+      console.log('deleted :>> ', deleted)
 
       // TODO:  send user a message with their url to their custom domain of my site, and
       // change the metadata to that url (done either something on the message or
@@ -155,7 +158,7 @@ async function getLinksFromPinboardEvent(context) {
       .get()
     if (queryOfBacklogForNewLink.empty && queryOfSharedLinksForNewLink.empty) {
       console.log(
-        `Attempting to insert link: ${linkData.u} . It didn't exist so I'm going to add it now.`
+        `For user ${user.username}: Attempting to insert link: ${linkData.u} . It didn't exist so I'm going to add it now.`
       )
       backlogCollection.add(linkData)
     }

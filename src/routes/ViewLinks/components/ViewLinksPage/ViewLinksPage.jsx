@@ -35,6 +35,8 @@ function useLinksList() {
 function ViewLinksPage() {
   // TODO: put this in state, set in useeffect
   const { links } = useLinksList()
+  console.log('links :>> ', links)
+  // const topLink = links[0].u
   const topLinka = links.shift().u
   const restOfLinks = links
 
@@ -44,15 +46,16 @@ function ViewLinksPage() {
 
       <LinksContainer>
         <DisplayIframe topLink={topLinka} />
-        {restOfLinks &&
-          restOfLinks.map((link, ind) => {
-            return (
-              <div key={`Link-${link.uid}-${ind}`}>
-                <DisplayIframe topLink={link.u} />
-                <br />
-              </div>
-            )
-          })}
+        {restOfLinks && restOfLinks.length > 0
+          ? restOfLinks.map((link, ind) => {
+              return (
+                <div key={`Link-${link.uid}-${ind}`}>
+                  <DisplayIframe topLink={link.u} />
+                  <br />
+                </div>
+              )
+            })
+          : null}
       </LinksContainer>
     </div>
   )
