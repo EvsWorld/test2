@@ -28,7 +28,7 @@ function NavbarWithoutAuth({ children, brandPath = '/' }) {
           to={brandPath}
           className={classes.brand}
           data-test="brand">
-          Test2
+          Evan thought you might like this...
         </Typography>
         <div className={classes.flex} />
         <Tooltip title="Toggle light/dark theme">

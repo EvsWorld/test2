@@ -8,6 +8,7 @@ const LinksContainer = styled.div`
   display: flex;
   ${'' /* align-items: center; */}
   flex-direction: column;
+  ${'' /* min-width: 500px; */}
 `
 
 function useLinksList() {
@@ -22,6 +23,7 @@ function useLinksList() {
     .collection(USERS_COLLECTION)
     .doc(auth.uid)
     .collection('sharedLinks')
+    .orderBy('timeSavedToSharedLinks', 'desc')
 
   console.log('linksRef :>> ', linksRef)
 
@@ -29,23 +31,21 @@ function useLinksList() {
   const { data: links } = useFirestoreCollectionData(linksRef)
   console.log('links :>> ', links)
 
-  return { links }
+  const topLink = links[0]
+  const restOfLinks = links.slice(1, links.length)
+  return { topLink, restOfLinks }
 }
 
 function ViewLinksPage() {
   // TODO: put this in state, set in useeffect
-  const { links } = useLinksList()
-  console.log('links :>> ', links)
-  // const topLink = links[0].u
-  const topLinka = links.shift().u
-  const restOfLinks = links
+  const { topLink, restOfLinks } = useLinksList()
 
   return (
     <div>
       <span>ViewLinks Component</span>
 
       <LinksContainer>
-        <DisplayIframe topLink={topLinka} />
+        <DisplayIframe topLink={topLink.u} />
         {restOfLinks && restOfLinks.length > 0
           ? restOfLinks.map((link, ind) => {
               return (

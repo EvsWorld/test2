@@ -3,10 +3,7 @@ import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import axios from 'axios'
 
-const Iframe = styled.div`
-  max-width: 1000px;
-  max-height: 100px;
-`
+const Iframe = styled.div``
 
 export function DisplayIframe({ topLink }) {
   const [iframeHtml, setIframeHtml] = useState(null)
@@ -49,12 +46,16 @@ export function DisplayIframe({ topLink }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   // TODO: check if resonse is 404, if so then display just the url
-  return (
+  return iframeHtml ? (
     <Iframe
       dangerouslySetInnerHTML={{
         __html: iframeHtml
       }}
     />
+  ) : (
+    <a target="_blank" rel="noopener noreferrer" href={topLink}>
+      {`Click the link -> ${topLink} `}
+    </a>
   )
 }
 

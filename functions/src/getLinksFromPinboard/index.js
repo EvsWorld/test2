@@ -90,7 +90,7 @@ async function getLinksFromPinboardEvent(context) {
       .where(
         'timeSavedToSharedLinks',
         '>=',
-        moment().subtract(user.shareInterval, 'day').toDate()
+        moment().subtract(user.shareInterval, 'min').toDate()
       )
       .where('timeSavedToSharedLinks', '<', moment().toDate())
       .get()
@@ -179,7 +179,7 @@ async function getLinksFromPinboardEvent(context) {
 }
 
 // const schedule = 'every 1 minutes'
-const schedule = '0 22 * * *'
+const schedule = '0 22 * * 1-7'
 
 /**
  * Cloud Function triggered on a specified CRON schedule
