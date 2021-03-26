@@ -2,8 +2,12 @@ import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
 import axios from 'axios'
 import moment from 'moment'
+import twilio from 'twilio'
 
-// const db = admin.firestore()
+const twilioClient = new twilio(accountSid, authToken)
+
+const accountSid = 'ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' // Your Account SID from www.twilio.com/console
+const authToken = 'your_auth_token' // Your Auth Token from www.twilio.com/console
 
 const collectIdsAndDocs = (doc) => {
   // turns these into documents that avoid some kind of trouble
@@ -30,8 +34,26 @@ async function getLinksFromPinboardEvent(context) {
     // console.log('users :>> ', users)
     users.forEach(async (user) => {
       saveLinks(user)
-      moveLink(user)
+      const message = await moveLink(user)
+      sendMessageToUser(user, message)
     })
+  }
+
+  /**
+      // TODO:  send user a message with their url to their custom domain of my site, and
+      // change the metadata to that url (done either something on the message or
+      // the url itself)
+   * @param {object} user
+   * @param message
+   */
+  async function sendMessageToUser(user, message) {
+    twilioClient.messages
+      .create({
+        body: 'Hello from Node',
+        to: '+12345678901', // Text this number
+        from: '+12345678901' // From a valid Twilio number
+      })
+      .then((message) => console.log(message.sid))
   }
 
   /**
@@ -72,11 +94,7 @@ async function getLinksFromPinboardEvent(context) {
       // TODO: then delete from backlog
       const deleted = await linkToMoveFromBacklog.ref.delete()
       console.log('deleted :>> ', deleted)
-
-      // TODO:  send user a message with their url to their custom domain of my site, and
-      // change the metadata to that url (done either something on the message or
-      // the url itself)
-      // function sendMessage( ) { }
+      return oldestLinkInBacklogWDate
     }
   }
   /**
