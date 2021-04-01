@@ -3,11 +3,12 @@ import * as admin from 'firebase-admin'
 import axios from 'axios'
 import moment from 'moment'
 import twilio from 'twilio'
-
-const twilioClient = new twilio(accountSid, authToken)
+import nodemailer from 'nodemailer'
 
 const accountSid = 'ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' // Your Account SID from www.twilio.com/console
 const authToken = 'your_auth_token' // Your Auth Token from www.twilio.com/console
+
+const twilioClient = new twilio(accountSid, authToken)
 
 const collectIdsAndDocs = (doc) => {
   // turns these into documents that avoid some kind of trouble
@@ -35,8 +36,47 @@ async function getLinksFromPinboardEvent(context) {
     users.forEach(async (user) => {
       saveLinks(user)
       const message = await moveLink(user)
-      sendMessageToUser(user, message)
+
+      await sendEmail(user, message).catch(console.error)
     })
+  }
+
+  /**
+   * send emails
+   * @param {object} user user
+   * @param {object} message message
+   */
+  async function sendEmail(user, message) {
+    // Generate test SMTP service account from ethereal.email
+    // Only needed if you don't have a real mail account for testing
+    const testAccount = await nodemailer.createTestAccount()
+
+    // create reusable transporter object using the default SMTP transport
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.ethereal.email',
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: testAccount.user, // generated ethereal user
+        pass: testAccount.pass // generated ethereal password
+      }
+    })
+
+    // send mail with defined transport object
+    const info = await transporter.sendMail({
+      from: '"Fred Foo 👻" <foo@example.com>', // sender address
+      to: user.email, // list of receivers
+      subject: 'Message? ✔', // Subject line
+      text: 'Hello message?', // plain text body
+      html: `<b>${message.d}</b>` // html body
+    })
+
+    console.log('Message sent: %s', info.messageId)
+    // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+    // Preview only available when sending through an Ethereal account
+    console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info))
+    // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
   }
 
   /**
@@ -46,7 +86,7 @@ async function getLinksFromPinboardEvent(context) {
    * @param {object} user
    * @param message
    */
-  async function sendMessageToUser(user, message) {
+  async function sendWhatsAppMessageToUser(user, message) {
     twilioClient.messages
       .create({
         body: 'Hello from Node',
