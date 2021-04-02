@@ -42,8 +42,6 @@ function ViewLinksPage() {
 
   return (
     <div>
-      <span>ViewLinks Component</span>
-
       <LinksContainer>
         <DisplayIframe topLink={topLink.u} />
         {restOfLinks && restOfLinks.length > 0

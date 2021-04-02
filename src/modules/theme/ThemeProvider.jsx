@@ -7,7 +7,7 @@ import ThemeSettings from '../../theme'
 import ThemeContext from './ThemeContext'
 
 export default function ThemeProvider({ children }) {
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: light)')
   const [isDarkMode, changeIsDarkMode] = useState(false)
 
   useEffect(() => {

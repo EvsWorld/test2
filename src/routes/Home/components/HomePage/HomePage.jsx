@@ -11,6 +11,8 @@ import {
   SIGNUP_PATH
 } from 'constants/paths'
 import styles from './HomePage.styles'
+import { useUser } from 'reactfire'
+import ViewLinksRoute from 'routes/ViewLinks'
 
 const reactRouterUrl = 'https://github.com/ReactTraining/react-router'
 const reactfireUrl = 'https://github.com/FirebaseExtended/reactfire'
@@ -20,10 +22,14 @@ const useStyles = makeStyles(styles)
 function Home() {
   const classes = useStyles()
 
-  return (
+  const { data: auth } = useUser()
+
+  return auth ? (
+    <ViewLinksRoute.component />
+  ) : (
     <div className={classes.root}>
       <Typography variant="h3" component="h3" gutterBottom>
-        Home Page
+        Login to see the links Evan shared!
       </Typography>
       <Paper>
         <Grid data-test="features" container justify="center">
