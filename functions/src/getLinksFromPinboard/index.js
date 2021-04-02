@@ -12,6 +12,7 @@ const twilioClient = new twilio(accountSid, authToken)
 
 const collectIdsAndDocs = (doc) => {
   // turns these into documents that avoid some kind of trouble
+  console.log('collectIdsAndDocs:  doc :>> ', doc.data())
   return { id: doc.id, ...doc.data() }
 }
 
@@ -33,7 +34,7 @@ async function getLinksFromPinboardEvent(context) {
     async function loopOverUsers() {
       const snapshot = await admin.firestore().collection('users').get()
       const users = snapshot.docs.map(collectIdsAndDocs)
-      // console.log('users :>> ', users)
+      console.log('users :>> ', users)
       users.forEach(async (user) => {
         saveLinks(user)
         const message = await moveLink(user)
@@ -75,7 +76,8 @@ async function getLinksFromPinboardEvent(context) {
         to: user.email, // list of receivers
         subject: 'Message? ✔', // Subject line
         text: 'Hello message?', // plain text body
-        html: `<b>${message.d}</b>` // html body
+        // TODO: put link to the site here
+        html: `<a href="https://dripshare-1.web.app/">${message.d}</a>` // html body
       })
 
       console.log('Message sent: %s', info.messageId)
@@ -115,6 +117,8 @@ async function getLinksFromPinboardEvent(context) {
         console.log(
           `NO LINKS FOUND in ${user.username}'s 'sharedLinks' collection added in the last ${user.shareInterval} day(s)! I'm going to move one.`
         )
+
+        // TODO: make this not fail if theirs nothing in their backlog
         // go take the oldest like from backlog copy it to sharedLinks,
         const backlogCollectionRef = await getCollection(user, 'backlog')
           // asc: sort from older to newer
@@ -143,7 +147,7 @@ async function getLinksFromPinboardEvent(context) {
 
         // TODO: then delete from backlog
         const deleted = await linkToMoveFromBacklog.ref.delete()
-        console.log('deleted :>> ', deleted)
+        // console.log('deleted :>> ', deleted)
         return oldestLinkInBacklogWDate
       }
       return null
@@ -254,7 +258,7 @@ async function getLinksFromPinboardEvent(context) {
 }
 
 // const schedule = 'every 1 minutes'
-const schedule = '0 22 * * 1-7'
+const schedule = '0 17 * * 1-7'
 
 /**
  * Cloud Function triggered on a specified CRON schedule
