@@ -39,7 +39,7 @@
     "@material-ui/icons": "^4.11.2",
     "@sentry/browser": "^6.1.0",
     "axios": "^0.21.1",
-    "firebase": "^8.2.6",
+    "firebase": "^8.5.0",
     "notistack": "^1.0.3",
     "prop-types": "^15.7.2",
     "react": "^17.0.1",
